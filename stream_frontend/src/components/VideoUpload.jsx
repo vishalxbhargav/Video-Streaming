@@ -1,57 +1,138 @@
-import React, { useState } from 'react'
-import upload from '../assets/upload.png'
-import { Card, Label, TextInput } from 'flowbite-react';
+import React, { useState } from 'react';
+import upload from '../assets/upload.png';
+import { Card, Label, TextInput, Textarea } from 'flowbite-react';
 
 export default function VideoUpload() {
-    const [file,setFile]=useState(null);
-    const [progress,setProgress]=useState(0)
-    const [uploading,setUploading]=useState(false);
-    const [message,setMessage]=useState("");
+    const [data, setData] = useState({
+        title: "",
+        description: "",
+        file: null,
+    });
+    const [progress, setProgress] = useState(0);
+    const [uploading, setUploading] = useState(false);
+    const [message, setMessage] = useState("");
 
-    const uploadFileHandler=()=>{
-        console.log(file)
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
+    const handleFileChange = (e) => {
+        setData((prevData) => ({
+            ...prevData,
+            file: e.target.files[0], // Store the file object
+        }));
+    };
+
+    const uploadFileHandler = (e) => {
+        if (!data.file) {
+            setMessage("Please select a file to upload.");
+            return;
+        }
+        e.preventDefault()
+        console.log(data);
+        setUploading(true);
+        setProgress(0);
+        setMessage("");
+
+        // Simulate an upload process (you can replace this with actual file upload logic)
+        const uploadInterval = setInterval(() => {
+            setProgress((prevProgress) => {
+                if (prevProgress >= 100) {
+                    clearInterval(uploadInterval);
+                    setUploading(false);
+                    setMessage('Upload successful!');
+                    return 100;
+                }
+                return prevProgress + 10;
+            });
+        }, 500);
+    };
+    const uploadToServer=async (data)=>{
+
     }
-  return (
-    <div className='py-6'>
-      <Card>
-        <h1 className='text-gray-400'>Upload Videos</h1>
-        <form className="space-y-5 gap-2">
-          <div className='p-2'>
-            <div>
-              <Label htmlFor='file-upload' value='Upload file'/>
-            </div>
-            <TextInput placeholder='Enter title'/>
-          </div>
-          <div className='flex items-center justify-center space-x-6'>
-          <div className="shrink-0">
-          <img className="h-16 w-16 object-cover rounded-full" src={upload} alt="Upload icon" />
+    return (
+        <div className="py-6">
+            <Card>
+                <h1 className="text-gray-400">Upload Videos</h1>
+                <form className="space-y-5 gap-2">
+                    <div>
+                        <div className="mb-2 block">
+                            <Label htmlFor="title" value="Enter Title" />
+                        </div>
+                        <TextInput
+                            id="title"
+                            name="title"
+                            value={data.title}
+                            onChange={handleInputChange}
+                            placeholder="Enter title"
+                        />
+                    </div>
+
+                    <div>
+                        <div className="max-w-md">
+                            <div className="mb-2 block">
+                                <Label htmlFor="description" value="Video description" />
+                            </div>
+                            <Textarea
+                                id="description"
+                                name="description"
+                                value={data.description}
+                                onChange={handleInputChange}
+                                placeholder="Video description..."
+                                required
+                                rows={4}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex items-center justify-center space-x-6">
+                        <div className="shrink-0">
+                            <img className="h-16 w-16 object-cover rounded-full" src={upload} alt="Upload icon" />
+                        </div>
+                        <label className="block">
+                            <span className="sr-only">Choose video file</span>
+                            <input
+                                type="file"
+                                onChange={handleFileChange} // Handle file input change
+                                className="block w-full text-sm text-slate-500
+                                          file:mr-4 file:py-2 file:px-4
+                                          file:rounded-full file:border-0
+                                          file:text-sm file:font-semibold
+                                          file:bg-violet-50 file:text-violet-700
+                                          hover:file:bg-violet-100"
+                            />
+                        </label>
+                    </div>
+                </form>
+
+                <div className="flex justify-center">
+                    <button
+                        onClick={(e)=>{uploadFileHandler(e)}}
+                        className="mt-4 py-2 px-4 text-white bg-blue-600 rounded-full 
+                                hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        disabled={uploading}
+                    >
+                        {uploading ? 'Uploading...' : 'Upload'}
+                    </button>
+                </div>
+
+                {uploading && (
+                    <div className="mt-4">
+                        <progress value={progress} max="100" className="w-full"></progress>
+                        <p className="text-center mt-2">{progress}%</p>
+                    </div>
+                )}
+
+                {message && (
+                    <div className="mt-4 text-center">
+                        <p className="text-lg text-blue-500">{message}</p>
+                    </div>
+                )}
+            </Card>
         </div>
-        <label className="block">
-          <span className="sr-only">Choose video file</span>
-          <input 
-            type="file" 
-            onChange={(e)=>setFile(e.target.files[0])}
-            className="block w-full text-sm text-slate-500
-                      file:mr-4 file:py-2 file:px-4
-                      file:rounded-full file:border-0
-                      file:text-sm file:font-semibold
-                      file:bg-violet-50 file:text-violet-700
-                      hover:file:bg-violet-100"
-          />
-        </label>
-          </div>
-      </form>
-
-      <div className="flex justify-center">
-        <button 
-            onClick={uploadFileHandler}
-          className="mt-4 py-2 px-4 text-white bg-blue-600 rounded-full 
-                    hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          Upload
-        </button>
-      </div>
-
-      </Card>
-    </div>
-  )
+    );
 }
