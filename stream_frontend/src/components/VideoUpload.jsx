@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
 import upload from '../assets/upload.png'
-import { Card } from 'flowbite-react';
+import { Card, Label, TextInput } from 'flowbite-react';
 
 export default function VideoUpload() {
     const [file,setFile]=useState(null);
+    const [progress,setProgress]=useState(0)
+    const [uploading,setUploading]=useState(false);
+    const [message,setMessage]=useState("");
+
     const uploadFileHandler=()=>{
         console.log(file)
     }
@@ -11,8 +15,15 @@ export default function VideoUpload() {
     <div className='py-6'>
       <Card>
         <h1 className='text-gray-400'>Upload Videos</h1>
-        <form className="flex items-center space-x-6  ">
-        <div className="shrink-0">
+        <form className="space-y-5 gap-2">
+          <div className='p-2'>
+            <div>
+              <Label htmlFor='file-upload' value='Upload file'/>
+            </div>
+            <TextInput placeholder='Enter title'/>
+          </div>
+          <div className='flex items-center justify-center space-x-6'>
+          <div className="shrink-0">
           <img className="h-16 w-16 object-cover rounded-full" src={upload} alt="Upload icon" />
         </div>
         <label className="block">
@@ -28,6 +39,7 @@ export default function VideoUpload() {
                       hover:file:bg-violet-100"
           />
         </label>
+          </div>
       </form>
 
       <div className="flex justify-center">
