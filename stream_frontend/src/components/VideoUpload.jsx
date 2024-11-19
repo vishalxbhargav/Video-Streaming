@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import upload from '../assets/upload.png';
 import { Card, Label, TextInput, Textarea } from 'flowbite-react';
+import axios from 'axios'
 
 export default function VideoUpload() {
     const [data, setData] = useState({
@@ -32,27 +33,22 @@ export default function VideoUpload() {
             setMessage("Please select a file to upload.");
             return;
         }
+        uploadToServer(data)
         e.preventDefault()
         console.log(data);
         setUploading(true);
         setProgress(0);
         setMessage("");
-
-        // Simulate an upload process (you can replace this with actual file upload logic)
-        const uploadInterval = setInterval(() => {
-            setProgress((prevProgress) => {
-                if (prevProgress >= 100) {
-                    clearInterval(uploadInterval);
-                    setUploading(false);
-                    setMessage('Upload successful!');
-                    return 100;
-                }
-                return prevProgress + 10;
-            });
-        }, 500);
     };
     const uploadToServer=async (data)=>{
-
+      try {
+        const response = await axios.post('http://localhost:8080/api/v1/videos', null,{
+          params:data
+        });
+        console.log('Response:', response.data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
     return (
         <div className="py-6">
